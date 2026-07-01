@@ -27,14 +27,14 @@ DawnSurfaceKit 是一个轻量级 SwiftUI surface 组件库，提供单选、多
 也可以在 `Package.swift` 中添加：
 
 ```swift
-.package(url: "https://gitee.com/shaoxu0904/dawn-sheet-kit.git", from: "0.2.0")
+.package(url: "git@gitee.com:shaoxu0904/dawn-surface-kit.git", from: "0.2.1")
 ```
 
 然后在目标里依赖这个产物：
 
 ```swift
-.product(name: "DawnSurfaceKit", package: "dawn-sheet-kit")
-.product(name: "DawnSurfaceTCA", package: "dawn-sheet-kit")
+.product(name: "DawnSurfaceKit", package: "dawn-surface-kit")
+.product(name: "DawnSurfaceTCA", package: "dawn-surface-kit")
 ```
 
 ## 基础用法
