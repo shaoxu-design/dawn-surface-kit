@@ -1,0 +1,108 @@
+import SwiftUI
+
+public struct DawnSheetTheme: Sendable {
+    public var backgroundColor: Color
+    public var cardBackgroundColor: Color
+    public var primaryTextColor: Color
+    public var secondaryTextColor: Color
+    public var tertiaryTextColor: Color
+    public var disabledTextColor: Color
+    public var accentColor: Color
+    public var destructiveColor: Color
+    public var dividerColor: Color
+    public var rowFont: Font
+    public var tipFont: Font
+    public var footerFont: Font
+    public var iconFont: Font
+    public var cardCornerRadius: CGFloat
+    public var gridCardCornerRadius: CGFloat
+    public var horizontalPadding: CGFloat
+    public var verticalPadding: CGFloat
+    public var verticalSpacing: CGFloat
+    public var rowHorizontalPadding: CGFloat
+    public var rowVerticalPadding: CGFloat
+    public var gridSpacing: CGFloat
+    public var bottomSpacerHeight: CGFloat
+    public var disabledOpacity: Double
+    public var selectedSingleIconName: String
+    public var unselectedIconName: String
+    public var selectedMultipleIconName: String
+    public var infoIconName: String
+
+    public static let `default` = DawnSheetTheme()
+
+    public init(
+        backgroundColor: Color = Color(red: 0.95, green: 0.95, blue: 0.97),
+        cardBackgroundColor: Color = .white,
+        primaryTextColor: Color = .primary,
+        secondaryTextColor: Color = .secondary,
+        tertiaryTextColor: Color = .secondary.opacity(0.72),
+        disabledTextColor: Color = .secondary,
+        accentColor: Color = .accentColor,
+        destructiveColor: Color = .red,
+        dividerColor: Color = .secondary.opacity(0.24),
+        rowFont: Font = .body,
+        tipFont: Font = .footnote,
+        footerFont: Font = .callout,
+        iconFont: Font = .system(size: 20, weight: .medium),
+        cardCornerRadius: CGFloat = 20,
+        gridCardCornerRadius: CGFloat = 12,
+        horizontalPadding: CGFloat = 16,
+        verticalPadding: CGFloat = 16,
+        verticalSpacing: CGFloat = 16,
+        rowHorizontalPadding: CGFloat = 16,
+        rowVerticalPadding: CGFloat = 16,
+        gridSpacing: CGFloat = 12,
+        bottomSpacerHeight: CGFloat = 20,
+        disabledOpacity: Double = 0.4,
+        selectedSingleIconName: String = "circle.inset.filled",
+        unselectedIconName: String = "circle",
+        selectedMultipleIconName: String = "checkmark",
+        infoIconName: String = "info.circle"
+    ) {
+        self.backgroundColor = backgroundColor
+        self.cardBackgroundColor = cardBackgroundColor
+        self.primaryTextColor = primaryTextColor
+        self.secondaryTextColor = secondaryTextColor
+        self.tertiaryTextColor = tertiaryTextColor
+        self.disabledTextColor = disabledTextColor
+        self.accentColor = accentColor
+        self.destructiveColor = destructiveColor
+        self.dividerColor = dividerColor
+        self.rowFont = rowFont
+        self.tipFont = tipFont
+        self.footerFont = footerFont
+        self.iconFont = iconFont
+        self.cardCornerRadius = cardCornerRadius
+        self.gridCardCornerRadius = gridCardCornerRadius
+        self.horizontalPadding = horizontalPadding
+        self.verticalPadding = verticalPadding
+        self.verticalSpacing = verticalSpacing
+        self.rowHorizontalPadding = rowHorizontalPadding
+        self.rowVerticalPadding = rowVerticalPadding
+        self.gridSpacing = gridSpacing
+        self.bottomSpacerHeight = bottomSpacerHeight
+        self.disabledOpacity = disabledOpacity
+        self.selectedSingleIconName = selectedSingleIconName
+        self.unselectedIconName = unselectedIconName
+        self.selectedMultipleIconName = selectedMultipleIconName
+        self.infoIconName = infoIconName
+    }
+}
+
+private struct DawnSheetThemeKey: EnvironmentKey {
+    static let defaultValue = DawnSheetTheme.default
+}
+
+public extension EnvironmentValues {
+    var dawnSheetTheme: DawnSheetTheme {
+        get { self[DawnSheetThemeKey.self] }
+        set { self[DawnSheetThemeKey.self] = newValue }
+    }
+}
+
+public extension View {
+    func dawnSheetTheme(_ theme: DawnSheetTheme) -> some View {
+        self.environment(\.dawnSheetTheme, theme)
+    }
+}
