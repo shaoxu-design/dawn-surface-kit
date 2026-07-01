@@ -1,12 +1,12 @@
 import SwiftUI
 
-public struct DawnSheetTexts: Equatable, Sendable {
+public struct DawnSurfaceTexts: Equatable, Sendable {
     public var cancel: String
     public var done: String
     public var reset: String
     public var manage: String
 
-    public static let `default` = DawnSheetTexts()
+    public static let `default` = DawnSurfaceTexts()
 
     public init(
         cancel: String = "取消",
@@ -21,19 +21,19 @@ public struct DawnSheetTexts: Equatable, Sendable {
     }
 }
 
-private struct DawnSheetTextsKey: EnvironmentKey {
-    static let defaultValue = DawnSheetTexts.default
+private struct DawnSurfaceTextsKey: EnvironmentKey {
+    static let defaultValue = DawnSurfaceTexts.default
 }
 
 public extension EnvironmentValues {
-    var dawnSheetTexts: DawnSheetTexts {
-        get { self[DawnSheetTextsKey.self] }
-        set { self[DawnSheetTextsKey.self] = newValue }
+    var dawnSurfaceTexts: DawnSurfaceTexts {
+        get { self[DawnSurfaceTextsKey.self] }
+        set { self[DawnSurfaceTextsKey.self] = newValue }
     }
 }
 
 public extension View {
-    func dawnSheetTexts(_ texts: DawnSheetTexts) -> some View {
-        self.environment(\.dawnSheetTexts, texts)
+    func dawnSurfaceTexts(_ texts: DawnSurfaceTexts) -> some View {
+        self.environment(\.dawnSurfaceTexts, texts)
     }
 }

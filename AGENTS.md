@@ -4,10 +4,11 @@
 
 ## 项目背景
 
-- 这是一个名为 `DawnSheetKit` 的 Swift 包。
-- 对外产物名称是 `DawnSheetKit`。
+- 这是一个名为 `DawnSurfaceKit` 的 Swift 包。
+- 对外产物只有两套：`DawnSurfaceKit`（纯 SwiftUI）与 `DawnSurfaceTCA`（TCA 接入）。
 - 包面向 iOS 17+ SwiftUI 项目；macOS 14+ 只用于命令行测试编译。
-- 包只依赖 Foundation 和 SwiftUI，不应引入业务项目依赖、TCA、本地化系统或宿主 App 设计系统。
+- `DawnSurfaceKit` 只依赖 Foundation 和 SwiftUI；`DawnSurfaceTCA` 可以依赖 The Composable Architecture。
+- 任一 target 都不应引入业务项目依赖、本地化系统或宿主 App 设计系统。
 
 ## 工作规则
 
@@ -23,7 +24,7 @@
 
 - 修改源码后至少运行 `swift test`。
 - 修改包配置后运行 `swift package describe`。
-- 测试优先覆盖纯逻辑、公开 API 编译、日期顺序、年份范围、时间提交语义。
+- 测试优先覆盖纯逻辑、公开 API 编译、TCA adapter 编译映射、日期顺序、年份范围、时间提交语义。
 - 不编写 SwiftUI 布局、动画帧或渲染快照测试。
 
 ## 范围控制

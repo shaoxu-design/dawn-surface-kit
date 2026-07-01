@@ -1,6 +1,13 @@
-# DawnSheetKit
+# DawnSurfaceKit
 
-DawnSheetKit 是一个轻量级 SwiftUI Sheet 组件库，提供单选、多选、网格选择、操作菜单、日期选择、时间选择等可复用弹层内容。组件只依赖 SwiftUI，不依赖业务项目、TCA、本地化系统或应用内设计系统。
+DawnSurfaceKit 是一个轻量级 SwiftUI surface 组件库，提供单选、多选、网格选择、操作菜单、日期选择、时间选择和可排序管理页骨架。
+
+包内提供两套入口：
+
+- `DawnSurfaceKit`：纯 SwiftUI 组件，只依赖 Foundation 和 SwiftUI。
+- `DawnSurfaceTCA`：TCA 接入层，依赖 `DawnSurfaceKit` 和 The Composable Architecture。
+
+组件不依赖业务项目、本地化系统或宿主 App 设计系统。
 
 ## 环境要求
 
@@ -15,18 +22,19 @@ DawnSheetKit 是一个轻量级 SwiftUI Sheet 组件库，提供单选、多选�
 
 1. 打开 **File > Add Package Dependencies**（文件 > 添加包依赖）。
 2. 输入仓库地址。
-3. 将 `DawnSheetKit` 产物添加到你的 App 目标。
+3. 将需要的产物添加到你的 App 目标：非 TCA 项目选 `DawnSurfaceKit`，TCA 项目可额外选 `DawnSurfaceTCA`。
 
 也可以在 `Package.swift` 中添加：
 
 ```swift
-.package(url: "https://gitee.com/shaoxu0904/dawn-sheet-kit.git", from: "0.1.0")
+.package(url: "https://gitee.com/shaoxu0904/dawn-sheet-kit.git", from: "0.2.0")
 ```
 
 然后在目标里依赖这个产物：
 
 ```swift
-.product(name: "DawnSheetKit", package: "dawn-sheet-kit")
+.product(name: "DawnSurfaceKit", package: "dawn-sheet-kit")
+.product(name: "DawnSurfaceTCA", package: "dawn-sheet-kit")
 ```
 
 ## 基础用法
@@ -34,14 +42,14 @@ DawnSheetKit 是一个轻量级 SwiftUI Sheet 组件库，提供单选、多选�
 ### 单选
 
 ```swift
-import DawnSheetKit
+import DawnSurfaceKit
 import SwiftUI
 
 struct CategoryPickerHost: View {
     @State private var selectedCategory = "生活"
 
     var body: some View {
-        DawnOptionPickerSheet(
+        DawnOptionPickerSurface(
             title: "选择分类",
             options: ["工作", "生活", "学习"],
             displayText: { $0 },
@@ -55,7 +63,7 @@ struct CategoryPickerHost: View {
 ### 多选
 
 ```swift
-DawnOptionPickerSheet(
+DawnOptionPickerSurface(
     title: "显示筛选",
     options: ["资产", "维护", "心愿"],
     displayText: { $0 },
@@ -77,7 +85,7 @@ DawnOptionPickerSheet(
 ### 网格选择
 
 ```swift
-DawnGridSelectionSheet(
+DawnGridSelectionSurface(
     title: "排序方式",
     options: SortMode.allCases,
     displayText: { $0.title },
@@ -90,7 +98,7 @@ DawnGridSelectionSheet(
 ### 操作菜单
 
 ```swift
-DawnActionMenuSheet(
+DawnActionMenuSurface(
     title: "更多操作",
     actions: [
         .init(title: "编辑", handler: edit),
@@ -104,14 +112,14 @@ DawnActionMenuSheet(
 ### 日期和时间
 
 ```swift
-DawnDatePickerSheet(
+DawnDatePickerSurface(
     selectedDate: $selectedDate,
     dateRange: Date.distantPast ... Date.distantFuture,
     title: "选择日期",
     locale: Locale(identifier: "zh-Hans")
 )
 
-DawnTimePickerSheet(
+DawnTimePickerSurface(
     time: DawnTimeComponents(hour: 9, minute: 30),
     title: "每日提醒"
 ) { newTime in
@@ -120,18 +128,73 @@ DawnTimePickerSheet(
 }
 ```
 
+### 管理页骨架
+
+```swift
+DawnManagementSurface(
+    title: "渠道管理",
+    presentationMode: .sheet,
+    items: channels,
+    addButtonTitle: "创建渠道",
+    onDismiss: dismiss,
+    onAddTapped: addChannel,
+    onMove: moveChannel
+) { channel in
+    DawnManagementRow(
+        title: channel.name,
+        onMenuTapped: { showMenu(channel.id) }
+    )
+} emptyContent: {
+    Text("暂无渠道")
+} principalContent: {
+    EmptyView()
+} loadingContent: {
+    ProgressView()
+}
+```
+
+### TCA 接入
+
+```swift
+import DawnSurfaceTCA
+
+DawnManagementStoreSurface(
+    store: store,
+    title: { $0.managementTitle },
+    items: { $0.editableItems },
+    isLoading: { $0.isLoading },
+    addButtonTitle: { $0.addActionTitle },
+    onDismiss: .dismissButtonTapped,
+    onAddTapped: .addButtonTapped,
+    onMove: { source, destination in .moveItem(source, destination) }
+) { item, store in
+    DawnManagementRow(
+        title: item.title,
+        onMenuTapped: { store.send(.itemActionMenuShown(item.id)) }
+    )
+} emptyContent: { _ in
+    Text("暂无内容")
+} principalContent: { _ in
+    EmptyView()
+} loadingContent: { _ in
+    ProgressView()
+}
+```
+
+`DawnSurfaceTCA` 只负责 Store 到 SwiftUI surface 的映射，不提供业务 reducer；校验、持久化、删除确认、会员限制和 HUD 等语义仍由宿主项目持有。
+
 ## 主题与文案
 
 通过环境统一配置外观和默认文案：
 
 ```swift
 ContentView()
-    .dawnSheetTheme(DawnSheetTheme(
+    .dawnSurfaceTheme(DawnSurfaceTheme(
         accentColor: .green,
         rowFont: .body,
         cardCornerRadius: 18
     ))
-    .dawnSheetTexts(DawnSheetTexts(
+    .dawnSurfaceTexts(DawnSurfaceTexts(
         cancel: "关闭",
         done: "应用",
         reset: "清空",
@@ -139,7 +202,7 @@ ContentView()
     ))
 ```
 
-`DawnSheetTheme` 可以控制背景色、卡片色、文本色、强调色、分割线、字体、间距、圆角、图标名称和禁用透明度。组件自身不读取任何宿主 App 的设计系统。
+`DawnSurfaceTheme` 可以控制背景色、卡片色、文本色、强调色、分割线、字体、间距、圆角、图标名称和禁用透明度。组件自身不读取任何宿主 App 的设计系统。
 
 ## 开发命令
 

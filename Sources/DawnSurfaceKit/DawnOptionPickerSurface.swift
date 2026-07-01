@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct DawnOptionPickerSheet<Option: Hashable, Footer: View>: View {
+public struct DawnOptionPickerSurface<Option: Hashable, Footer: View>: View {
     public let title: String
     public let options: [Option]
     public let displayText: (Option) -> String
@@ -13,8 +13,8 @@ public struct DawnOptionPickerSheet<Option: Hashable, Footer: View>: View {
     public let footer: () -> Footer
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dawnSheetTheme) private var theme
-    @Environment(\.dawnSheetTexts) private var texts
+    @Environment(\.dawnSurfaceTheme) private var theme
+    @Environment(\.dawnSurfaceTexts) private var texts
 
     public init(
         title: String,
@@ -44,12 +44,12 @@ public struct DawnOptionPickerSheet<Option: Hashable, Footer: View>: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: self.theme.verticalSpacing) {
-                    DawnSheetCard {
+                    DawnSurfaceCard {
                         ForEach(Array(self.options.enumerated()), id: \.element) { index, option in
                             self.optionRow(option)
 
                             if index < self.options.count - 1 {
-                                DawnSheetDivider()
+                                DawnSurfaceDivider()
                             }
                         }
                     }
@@ -157,7 +157,7 @@ public struct DawnOptionPickerSheet<Option: Hashable, Footer: View>: View {
     }
 }
 
-public extension DawnOptionPickerSheet where Footer == EmptyView {
+public extension DawnOptionPickerSurface where Footer == EmptyView {
     init(
         title: String,
         options: [Option],

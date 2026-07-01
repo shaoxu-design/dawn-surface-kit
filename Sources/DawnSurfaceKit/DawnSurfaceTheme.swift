@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct DawnSheetTheme: Sendable {
+public struct DawnSurfaceTheme: Sendable {
     public var backgroundColor: Color
     public var cardBackgroundColor: Color
     public var primaryTextColor: Color
@@ -29,7 +29,7 @@ public struct DawnSheetTheme: Sendable {
     public var selectedMultipleIconName: String
     public var infoIconName: String
 
-    public static let `default` = DawnSheetTheme()
+    public static let `default` = DawnSurfaceTheme()
 
     public init(
         backgroundColor: Color = Color(red: 0.95, green: 0.95, blue: 0.97),
@@ -90,19 +90,19 @@ public struct DawnSheetTheme: Sendable {
     }
 }
 
-private struct DawnSheetThemeKey: EnvironmentKey {
-    static let defaultValue = DawnSheetTheme.default
+private struct DawnSurfaceThemeKey: EnvironmentKey {
+    static let defaultValue = DawnSurfaceTheme.default
 }
 
 public extension EnvironmentValues {
-    var dawnSheetTheme: DawnSheetTheme {
-        get { self[DawnSheetThemeKey.self] }
-        set { self[DawnSheetThemeKey.self] = newValue }
+    var dawnSurfaceTheme: DawnSurfaceTheme {
+        get { self[DawnSurfaceThemeKey.self] }
+        set { self[DawnSurfaceThemeKey.self] = newValue }
     }
 }
 
 public extension View {
-    func dawnSheetTheme(_ theme: DawnSheetTheme) -> some View {
-        self.environment(\.dawnSheetTheme, theme)
+    func dawnSurfaceTheme(_ theme: DawnSurfaceTheme) -> some View {
+        self.environment(\.dawnSurfaceTheme, theme)
     }
 }

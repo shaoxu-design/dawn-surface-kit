@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct DawnDatePickerSheet: View {
+public struct DawnDatePickerSurface: View {
     @Binding private var selectedDate: Date
     private let dateRange: ClosedRange<Date>
     private let title: String
@@ -8,8 +8,8 @@ public struct DawnDatePickerSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var environmentLocale
-    @Environment(\.dawnSheetTheme) private var theme
-    @Environment(\.dawnSheetTexts) private var texts
+    @Environment(\.dawnSurfaceTheme) private var theme
+    @Environment(\.dawnSurfaceTexts) private var texts
 
     public init(
         selectedDate: Binding<Date>,
@@ -63,7 +63,7 @@ public struct DawnDatePickerSheet: View {
     }
 }
 
-public struct DawnDateTimePickerSheet: View {
+public struct DawnDateTimePickerSurface: View {
     @Binding private var selectedDate: Date
     private let dateRange: ClosedRange<Date>
     private let title: String
@@ -71,8 +71,8 @@ public struct DawnDateTimePickerSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var environmentLocale
-    @Environment(\.dawnSheetTheme) private var theme
-    @Environment(\.dawnSheetTexts) private var texts
+    @Environment(\.dawnSurfaceTheme) private var theme
+    @Environment(\.dawnSurfaceTexts) private var texts
 
     public init(
         selectedDate: Binding<Date>,
@@ -125,7 +125,7 @@ public struct DawnDateTimePickerSheet: View {
     }
 }
 
-public struct DawnTimePickerSheet: View {
+public struct DawnTimePickerSurface: View {
     private let title: String
     private let locale: Locale?
     private let onSave: (DawnTimeComponents) -> Void
@@ -133,8 +133,8 @@ public struct DawnTimePickerSheet: View {
     @State private var draft: DawnTimePickerDraft
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var environmentLocale
-    @Environment(\.dawnSheetTheme) private var theme
-    @Environment(\.dawnSheetTexts) private var texts
+    @Environment(\.dawnSurfaceTheme) private var theme
+    @Environment(\.dawnSurfaceTexts) private var texts
 
     public init(
         time: DawnTimeComponents,

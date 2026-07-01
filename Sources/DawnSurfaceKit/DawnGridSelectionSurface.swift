@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct DawnGridSelectionSheet<Option: Hashable>: View {
+public struct DawnGridSelectionSurface<Option: Hashable>: View {
     public let title: String
     public let options: [Option]
     public let displayText: (Option) -> String
@@ -9,8 +9,8 @@ public struct DawnGridSelectionSheet<Option: Hashable>: View {
     public var tip: String?
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dawnSheetTheme) private var theme
-    @Environment(\.dawnSheetTexts) private var texts
+    @Environment(\.dawnSurfaceTheme) private var theme
+    @Environment(\.dawnSurfaceTexts) private var texts
 
     public init(
         title: String,

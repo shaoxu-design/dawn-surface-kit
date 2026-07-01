@@ -4,27 +4,51 @@
 import PackageDescription
 
 let package = Package(
-    name: "DawnSheetKit",
+    name: "DawnSurfaceKit",
     platforms: [
         .iOS(.v17),
         .macOS(.v14),
     ],
     products: [
         .library(
-            name: "DawnSheetKit",
-            targets: ["DawnSheetKit"]
+            name: "DawnSurfaceKit",
+            targets: ["DawnSurfaceKit"]
         ),
+        .library(
+            name: "DawnSurfaceTCA",
+            targets: ["DawnSurfaceTCA"]
+        ),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.26.0"),
     ],
     targets: [
         .target(
-            name: "DawnSheetKit",
+            name: "DawnSurfaceKit",
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ]
+        ),
+        .target(
+            name: "DawnSurfaceTCA",
+            dependencies: [
+                "DawnSurfaceKit",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ]
         ),
         .testTarget(
-            name: "DawnSheetKitTests",
-            dependencies: ["DawnSheetKit"]
+            name: "DawnSurfaceKitTests",
+            dependencies: ["DawnSurfaceKit"]
+        ),
+        .testTarget(
+            name: "DawnSurfaceTCATests",
+            dependencies: [
+                "DawnSurfaceTCA",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
         ),
     ]
 )

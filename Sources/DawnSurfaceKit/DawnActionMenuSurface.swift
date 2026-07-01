@@ -1,13 +1,13 @@
 import SwiftUI
 
-public struct DawnActionMenuSheet: View {
+public struct DawnActionMenuSurface: View {
     public let title: String
     public let actions: [Action]
     public let onCancel: (() -> Void)?
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dawnSheetTheme) private var theme
-    @Environment(\.dawnSheetTexts) private var texts
+    @Environment(\.dawnSurfaceTheme) private var theme
+    @Environment(\.dawnSurfaceTexts) private var texts
 
     public init(
         title: String,
@@ -23,12 +23,12 @@ public struct DawnActionMenuSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: self.theme.verticalSpacing) {
-                    DawnSheetCard {
+                    DawnSurfaceCard {
                         ForEach(Array(self.actions.enumerated()), id: \.offset) { index, action in
                             self.actionRow(action)
 
                             if index < self.actions.count - 1 {
-                                DawnSheetDivider()
+                                DawnSurfaceDivider()
                                     .padding(.leading, self.theme.rowHorizontalPadding)
                             }
                         }
@@ -76,7 +76,7 @@ public struct DawnActionMenuSheet: View {
     }
 }
 
-public extension DawnActionMenuSheet {
+public extension DawnActionMenuSurface {
     struct Action {
         public let title: String
         public var tintColor: Color?
@@ -102,7 +102,7 @@ public extension DawnActionMenuSheet {
         ) -> Action {
             Action(
                 title: title,
-                tintColor: DawnSheetTheme.default.destructiveColor,
+                tintColor: DawnSurfaceTheme.default.destructiveColor,
                 dismissesSheet: dismissesSheet,
                 handler: handler
             )

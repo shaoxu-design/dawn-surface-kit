@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct DawnSheetCard<Content: View>: View {
+struct DawnSurfaceCard<Content: View>: View {
     let content: Content
 
-    @Environment(\.dawnSheetTheme) private var theme
+    @Environment(\.dawnSurfaceTheme) private var theme
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -19,8 +19,8 @@ struct DawnSheetCard<Content: View>: View {
     }
 }
 
-struct DawnSheetDivider: View {
-    @Environment(\.dawnSheetTheme) private var theme
+struct DawnSurfaceDivider: View {
+    @Environment(\.dawnSurfaceTheme) private var theme
 
     var body: some View {
         Divider()
@@ -52,6 +52,15 @@ extension View {
     func dawnPresentationBackgroundInteraction() -> some View {
         #if os(iOS)
         self.presentationBackgroundInteraction(.automatic)
+        #else
+        self
+        #endif
+    }
+
+    @ViewBuilder
+    func dawnManagementEditMode(isActive: Bool) -> some View {
+        #if os(iOS)
+        self.environment(\.editMode, .constant(isActive ? .active : .inactive))
         #else
         self
         #endif
