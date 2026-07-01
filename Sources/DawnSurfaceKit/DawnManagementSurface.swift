@@ -30,6 +30,7 @@ public struct DawnManagementSurface<
 
     @Environment(\.dawnSurfaceTheme) private var theme
     @Environment(\.dawnSurfaceTexts) private var texts
+    @Environment(\.colorScheme) private var colorScheme
 
     public init(
         title: String,
@@ -207,20 +208,81 @@ public struct DawnManagementSurface<
     private var addButtonInset: some View {
         if let addButtonTitle, let onAddTapped {
             Button(action: onAddTapped) {
-                Label(addButtonTitle, systemImage: self.addButtonSystemImage)
-                    .font(self.theme.rowFont)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: DawnManagementLayout.addButtonHeight)
+                self.addButtonLabel(title: addButtonTitle)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(Color.white)
-            .background(self.theme.accentColor)
-            .clipShape(Capsule())
+            .shadow(
+                color: self.addButtonShadowColor,
+                radius: self.addButtonShadowRadius,
+                x: 0,
+                y: self.addButtonShadowYOffset
+            )
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, self.theme.horizontalPadding)
             .padding(.top, 8)
             .padding(.bottom, 8)
         }
+    }
+
+    @ViewBuilder
+    private func addButtonLabel(title: String) -> some View {
+        let content = HStack(spacing: 8) {
+            Image(systemName: self.addButtonSystemImage)
+                .font(.system(size: 16, weight: .bold))
+
+            Text(title)
+                .font(self.theme.footerFont)
+        }
+        .foregroundStyle(Color.white)
+        .padding(.horizontal, 24)
+        .frame(height: DawnManagementLayout.addButtonHeight)
+
+        #if os(iOS)
+        if #available(iOS 26.0, *) {
+            content
+                .glassEffect(.regular.tint(self.theme.accentColor).interactive(), in: Capsule())
+        } else {
+            content
+                .background(self.theme.accentColor)
+                .clipShape(Capsule())
+        }
+        #else
+        content
+            .background(self.theme.accentColor)
+            .clipShape(Capsule())
+        #endif
+    }
+
+    private var addButtonShadowColor: Color {
+        #if os(iOS)
+        if #available(iOS 26.0, *) {
+            return self.colorScheme == .dark
+                ? Color.black.opacity(0.16)
+                : Color.black.opacity(0.08)
+        }
+        #endif
+
+        return Color.black.opacity(0.12)
+    }
+
+    private var addButtonShadowRadius: CGFloat {
+        #if os(iOS)
+        if #available(iOS 26.0, *) {
+            return 8
+        }
+        #endif
+
+        return 12
+    }
+
+    private var addButtonShadowYOffset: CGFloat {
+        #if os(iOS)
+        if #available(iOS 26.0, *) {
+            return 2
+        }
+        #endif
+
+        return 6
     }
 
     private var loadingOverlay: some View {
