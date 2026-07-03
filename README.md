@@ -27,7 +27,7 @@ DawnSurfaceKit 是一个轻量级 SwiftUI surface 组件库，提供单选、多
 也可以在 `Package.swift` 中添加：
 
 ```swift
-.package(url: "git@gitee.com:shaoxu0904/dawn-surface-kit.git", from: "0.2.1")
+.package(url: "git@gitee.com:shaoxu0904/dawn-surface-kit.git", from: "0.2.2")
 ```
 
 然后在目标里依赖这个产物：
@@ -202,7 +202,7 @@ ContentView()
     ))
 ```
 
-`DawnSurfaceTheme` 可以控制背景色、卡片色、文本色、强调色、分割线、字体、间距、圆角、图标名称和禁用透明度。组件自身不读取任何宿主 App 的设计系统。
+`DawnSurfaceTheme` 默认已支持原生深色模式，可按需覆盖；它可以控制背景色、卡片色、文本色、强调色、分割线、字体、间距、圆角、图标名称和禁用透明度。组件自身不读取任何宿主 App 的设计系统。
 
 ## 开发命令
 

@@ -1,4 +1,10 @@
+import Foundation
 import SwiftUI
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 public struct DawnSurfaceTheme: Sendable {
     public var backgroundColor: Color
@@ -32,18 +38,18 @@ public struct DawnSurfaceTheme: Sendable {
     public static let `default` = DawnSurfaceTheme()
 
     public init(
-        backgroundColor: Color = Color(red: 0.95, green: 0.95, blue: 0.97),
-        cardBackgroundColor: Color = .white,
-        primaryTextColor: Color = .primary,
-        secondaryTextColor: Color = .secondary,
-        tertiaryTextColor: Color = .secondary.opacity(0.72),
-        disabledTextColor: Color = .secondary,
-        accentColor: Color = .accentColor,
-        destructiveColor: Color = .red,
-        dividerColor: Color = .secondary.opacity(0.24),
-        rowFont: Font = .body,
-        tipFont: Font = .footnote,
-        footerFont: Font = .callout,
+        backgroundColor: Color = DawnSurfaceDynamicColor.color(light: "#F2F2F7", dark: "#1C1C1E"),
+        cardBackgroundColor: Color = DawnSurfaceDynamicColor.color(light: "#FFFFFF", dark: "#2C2C2E"),
+        primaryTextColor: Color = DawnSurfaceDynamicColor.color(light: "#000000", dark: "#FFFFFF"),
+        secondaryTextColor: Color = DawnSurfaceDynamicColor.color(light: "#8E8E93", dark: "#8E8E93"),
+        tertiaryTextColor: Color = DawnSurfaceDynamicColor.color(light: "#3C3C43", dark: "#EBEBF5").opacity(0.3),
+        disabledTextColor: Color = DawnSurfaceDynamicColor.color(light: "#8E8E93", dark: "#8E8E93"),
+        accentColor: Color = DawnSurfaceDynamicColor.color(light: "#10B981", dark: "#34D399"),
+        destructiveColor: Color = DawnSurfaceDynamicColor.color(light: "#F43F5E", dark: "#FB7185"),
+        dividerColor: Color = DawnSurfaceDynamicColor.color(light: "#D1D1D6", dark: "#3A3A3C"),
+        rowFont: Font = .system(size: 16, weight: .regular),
+        tipFont: Font = .system(size: 12, weight: .regular),
+        footerFont: Font = .system(size: 16, weight: .regular),
         iconFont: Font = .system(size: 20, weight: .medium),
         cardCornerRadius: CGFloat = 20,
         gridCardCornerRadius: CGFloat = 12,
@@ -104,5 +110,47 @@ public extension EnvironmentValues {
 public extension View {
     func dawnSurfaceTheme(_ theme: DawnSurfaceTheme) -> some View {
         self.environment(\.dawnSurfaceTheme, theme)
+    }
+}
+
+@usableFromInline
+enum DawnSurfaceDynamicColor {
+    @usableFromInline
+    static func color(light lightHex: String, dark darkHex: String) -> Color {
+        #if os(iOS)
+        Color(UIColor { traitCollection in
+            switch traitCollection.userInterfaceStyle {
+            case .dark:
+                return UIColor(Color(dawnSurfaceHex: darkHex))
+            default:
+                return UIColor(Color(dawnSurfaceHex: lightHex))
+            }
+        })
+        #elseif os(macOS)
+        Color(NSColor(name: nil) { appearance in
+            if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
+                return NSColor(Color(dawnSurfaceHex: darkHex))
+            } else {
+                return NSColor(Color(dawnSurfaceHex: lightHex))
+            }
+        })
+        #else
+        Color(dawnSurfaceHex: lightHex)
+        #endif
+    }
+}
+
+extension Color {
+    @usableFromInline
+    init(dawnSurfaceHex hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+
+        let red = Double((int >> 16) & 0xFF) / 255
+        let green = Double((int >> 8) & 0xFF) / 255
+        let blue = Double(int & 0xFF) / 255
+
+        self.init(.sRGB, red: red, green: green, blue: blue, opacity: 1)
     }
 }

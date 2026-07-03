@@ -2,6 +2,11 @@
 import Foundation
 import SwiftUI
 import Testing
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 @Suite(.serialized)
 struct DawnSurfaceKitAPITests {
@@ -83,6 +88,24 @@ struct DawnSurfaceKitAPITests {
         _ = host
     }
 
+    @Test("default theme resolves iThings-compatible light and dark colors")
+    func defaultThemeResolvesIThingsCompatibleLightAndDarkColors() throws {
+        let theme = DawnSurfaceTheme.default
+
+        #expect(try Self.hex(theme.backgroundColor, in: .light) == "#F2F2F7")
+        #expect(try Self.hex(theme.backgroundColor, in: .dark) == "#1C1C1E")
+        #expect(try Self.hex(theme.cardBackgroundColor, in: .light) == "#FFFFFF")
+        #expect(try Self.hex(theme.cardBackgroundColor, in: .dark) == "#2C2C2E")
+        #expect(try Self.hex(theme.primaryTextColor, in: .light) == "#000000")
+        #expect(try Self.hex(theme.primaryTextColor, in: .dark) == "#FFFFFF")
+        #expect(try Self.hex(theme.accentColor, in: .light) == "#10B981")
+        #expect(try Self.hex(theme.accentColor, in: .dark) == "#34D399")
+        #expect(try Self.hex(theme.destructiveColor, in: .light) == "#F43F5E")
+        #expect(try Self.hex(theme.destructiveColor, in: .dark) == "#FB7185")
+        #expect(try Self.hex(theme.dividerColor, in: .light) == "#D1D1D6")
+        #expect(try Self.hex(theme.dividerColor, in: .dark) == "#3A3A3C")
+    }
+
     @Test("date and time sheet APIs compile")
     @MainActor
     func dateAndTimeSheetAPIsCompile() throws {
@@ -152,5 +175,49 @@ struct DawnSurfaceKitAPITests {
         }
 
         _ = surface
+    }
+}
+
+private enum DawnSurfaceTestColorScheme {
+    case light
+    case dark
+}
+
+private extension DawnSurfaceKitAPITests {
+    static func hex(_ color: Color, in scheme: DawnSurfaceTestColorScheme) throws -> String {
+        #if os(iOS)
+        let traits = UITraitCollection(userInterfaceStyle: scheme == .dark ? .dark : .light)
+        let resolved = UIColor(color).resolvedColor(with: traits)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        #elseif os(macOS)
+        let appearanceName: NSAppearance.Name = scheme == .dark ? .darkAqua : .aqua
+        let appearance = try #require(NSAppearance(named: appearanceName))
+        var srgb: NSColor?
+        appearance.performAsCurrentDrawingAppearance {
+            srgb = NSColor(color).usingColorSpace(.sRGB)
+        }
+        let resolved = try #require(srgb)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        #endif
+
+        #if os(iOS)
+        let extracted = resolved.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        #expect(extracted)
+        #elseif os(macOS)
+        resolved.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        #endif
+
+        return String(
+            format: "#%02X%02X%02X",
+            Int((red * 255).rounded()),
+            Int((green * 255).rounded()),
+            Int((blue * 255).rounded())
+        )
     }
 }

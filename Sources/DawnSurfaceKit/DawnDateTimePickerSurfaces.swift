@@ -32,6 +32,8 @@ public struct DawnDatePickerSurface: View {
                 yearStyle: .full
             )
             .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(self.theme.backgroundColor.ignoresSafeArea())
             .navigationTitle(self.title)
             .dawnInlineNavigationTitle()
             .toolbar {
@@ -94,6 +96,8 @@ public struct DawnDateTimePickerSurface: View {
                 locale: self.resolvedLocale
             )
             .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(self.theme.backgroundColor.ignoresSafeArea())
             .navigationTitle(self.title)
             .dawnInlineNavigationTitle()
             .toolbar {
@@ -162,6 +166,8 @@ public struct DawnTimePickerSurface: View {
                 locale: self.resolvedLocale
             )
             .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(self.theme.backgroundColor.ignoresSafeArea())
             .navigationTitle(self.title)
             .dawnInlineNavigationTitle()
             .toolbar {

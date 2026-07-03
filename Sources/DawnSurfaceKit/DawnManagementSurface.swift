@@ -232,6 +232,7 @@ public struct DawnManagementSurface<
 
             Text(title)
                 .font(self.theme.footerFont)
+                .fontWeight(.medium)
         }
         .foregroundStyle(Color.white)
         .padding(.horizontal, 24)
