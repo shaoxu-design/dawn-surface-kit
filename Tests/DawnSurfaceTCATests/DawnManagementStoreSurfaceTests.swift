@@ -28,6 +28,9 @@ struct DawnManagementStoreSurfaceTests {
             case addButtonTapped
             case move(IndexSet, Int)
             case menuTapped(String)
+            case createSubmitted(String)
+            case editSubmitted(String, String)
+            case deleteTapped(String)
         }
 
         var body: some ReducerOf<Self> {
@@ -37,7 +40,13 @@ struct DawnManagementStoreSurfaceTests {
                     state.items.move(fromOffsets: source, toOffset: destination)
                     return .none
 
-                case .onAppear, .dismissButtonTapped, .addButtonTapped, .menuTapped:
+                case .onAppear,
+                     .dismissButtonTapped,
+                     .addButtonTapped,
+                     .menuTapped,
+                     .createSubmitted,
+                     .editSubmitted,
+                     .deleteTapped:
                     return .none
                 }
             }
@@ -66,6 +75,57 @@ struct DawnManagementStoreSurfaceTests {
             DawnManagementRow(
                 title: item.title,
                 onMenuTapped: { store.send(.menuTapped(item.id)) }
+            )
+        } emptyContent: { _ in
+            Text("暂无渠道")
+        } principalContent: { _ in
+            EmptyView()
+        } loadingContent: { _ in
+            ProgressView()
+        }
+
+        _ = surface
+    }
+
+    @Test("editable store surface adapter compiles with create edit delete action mapping")
+    @MainActor
+    func editableStoreSurfaceAdapterCompilesWithCreateEditDeleteActionMapping() {
+        let store = Store(initialState: HarnessFeature.State()) {
+            HarnessFeature()
+        }
+
+        let surface = DawnEditableManagementStoreSurface(
+            store: store,
+            presentationMode: .sheet,
+            title: { _ in "渠道管理" },
+            items: \.items,
+            itemTitle: \.title,
+            isLoading: \.isLoading,
+            addButtonTitle: { _ in "创建渠道" },
+            editConfiguration: { _ in
+                DawnManagementEditConfiguration(
+                    createTitle: "创建渠道",
+                    editTitle: "编辑渠道",
+                    inputPlaceholder: "例如：Discord",
+                    createButtonTitle: "创建",
+                    editButtonTitle: "确定",
+                    menuEditTitle: "编辑",
+                    menuDeleteTitle: "删除"
+                )
+            },
+            onAppear: .onAppear,
+            onDismiss: .dismissButtonTapped,
+            onCreate: { .createSubmitted($0) },
+            onEdit: { item, name in .editSubmitted(item.id, name) },
+            onDelete: { item in .deleteTapped(item.id) },
+            onMove: { source, destination in .move(source, destination) }
+        ) { item, store, showMenu in
+            DawnManagementRow(
+                title: item.title,
+                onMenuTapped: {
+                    store.send(.menuTapped(item.id))
+                    showMenu()
+                }
             )
         } emptyContent: { _ in
             Text("暂无渠道")

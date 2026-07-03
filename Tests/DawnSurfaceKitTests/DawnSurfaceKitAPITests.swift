@@ -176,6 +176,105 @@ struct DawnSurfaceKitAPITests {
 
         _ = surface
     }
+
+    @Test("editable management configuration exposes default and custom copy")
+    func editableManagementConfigurationExposesDefaultAndCustomCopy() {
+        let defaultConfiguration = DawnManagementEditConfiguration()
+
+        #expect(defaultConfiguration.createTitle == "创建")
+        #expect(defaultConfiguration.editTitle == "编辑")
+        #expect(defaultConfiguration.inputPlaceholder == "请输入名称")
+        #expect(defaultConfiguration.createButtonTitle == "创建")
+        #expect(defaultConfiguration.editButtonTitle == "确定")
+        #expect(defaultConfiguration.menuEditTitle == "编辑")
+        #expect(defaultConfiguration.menuDeleteTitle == "删除")
+
+        let customConfiguration = DawnManagementEditConfiguration(
+            createTitle: "创建平台",
+            editTitle: "编辑平台",
+            inputPlaceholder: "例如：visionOS",
+            createButtonTitle: "保存",
+            editButtonTitle: "更新",
+            menuEditTitle: "重命名",
+            menuDeleteTitle: "移除"
+        )
+
+        #expect(customConfiguration.createTitle == "创建平台")
+        #expect(customConfiguration.editTitle == "编辑平台")
+        #expect(customConfiguration.inputPlaceholder == "例如：visionOS")
+        #expect(customConfiguration.createButtonTitle == "保存")
+        #expect(customConfiguration.editButtonTitle == "更新")
+        #expect(customConfiguration.menuEditTitle == "重命名")
+        #expect(customConfiguration.menuDeleteTitle == "移除")
+    }
+
+    @Test("editable management surface APIs compile with default and custom rows")
+    @MainActor
+    func editableManagementSurfaceAPIsCompileWithDefaultAndCustomRows() {
+        struct Item: Identifiable, Equatable {
+            let id: String
+            let title: String
+        }
+
+        let items = [
+            Item(id: "ios", title: "iOS"),
+            Item(id: "android", title: "Android"),
+        ]
+        let configuration = DawnManagementEditConfiguration(
+            createTitle: "新增平台",
+            editTitle: "编辑平台",
+            inputPlaceholder: "例如：visionOS",
+            createButtonTitle: "保存",
+            editButtonTitle: "保存",
+            menuEditTitle: "编辑",
+            menuDeleteTitle: "删除"
+        )
+
+        let defaultRowSurface = DawnEditableManagementSurface(
+            title: "平台管理",
+            presentationMode: .embedded,
+            items: items,
+            itemTitle: \.title,
+            addButtonTitle: "新增平台",
+            editConfiguration: configuration,
+            onDismiss: { },
+            onCreate: { _ in },
+            onEdit: { _, _ in },
+            onDelete: { _ in },
+            onMove: { _, _ in }
+        ) {
+            Text("暂无平台")
+        } principalContent: {
+            EmptyView()
+        } loadingContent: {
+            ProgressView()
+        }
+
+        let customRowSurface = DawnEditableManagementSurface(
+            title: "平台管理",
+            items: items,
+            itemTitle: \.title,
+            editText: { "编辑：\($0.title)" },
+            addButtonTitle: "新增平台",
+            editConfiguration: configuration,
+            onCreate: { _ in },
+            onEdit: { _, _ in },
+            onDelete: { _ in }
+        ) { item, showMenu in
+            Button(action: showMenu) {
+                Text(item.title)
+            }
+        } emptyContent: {
+            Text("暂无平台")
+        } principalContent: {
+            EmptyView()
+        } loadingContent: {
+            ProgressView()
+        }
+
+        _ = defaultRowSurface
+        _ = customRowSurface
+    }
 }
 
 private enum DawnSurfaceTestColorScheme {

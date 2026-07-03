@@ -153,6 +153,45 @@ DawnManagementSurface(
 }
 ```
 
+### 可编辑管理页
+
+```swift
+DawnEditableManagementSurface(
+    title: "分类管理",
+    presentationMode: .sheet,
+    items: categories,
+    itemTitle: { $0.name },
+    addButtonTitle: "创建分类",
+    editConfiguration: DawnManagementEditConfiguration(
+        createTitle: "创建分类",
+        editTitle: "编辑分类",
+        inputPlaceholder: "请输入分类名称",
+        createButtonTitle: "创建",
+        editButtonTitle: "确定",
+        menuEditTitle: "编辑",
+        menuDeleteTitle: "删除"
+    ),
+    onCreate: { name in
+        createCategory(name)
+    },
+    onEdit: { category, name in
+        renameCategory(category, to: name)
+    },
+    onDelete: { category in
+        showDeleteConfirmation(for: category)
+    },
+    onMove: moveCategory
+) {
+    Text("暂无分类")
+} principalContent: {
+    EmptyView()
+} loadingContent: {
+    ProgressView()
+}
+```
+
+`DawnEditableManagementSurface` 会统一处理浮动创建按钮、单字段输入 Alert、行尾操作菜单和编辑 / 删除菜单项的呈现顺序。组件只把用户输入的原始字符串和当前 item 回传给宿主；空值、重复名、会员限制、持久化、HUD、删除确认等业务规则仍由宿主项目处理。
+
 ### TCA 接入
 
 ```swift
@@ -171,6 +210,41 @@ DawnManagementStoreSurface(
     DawnManagementRow(
         title: item.title,
         onMenuTapped: { store.send(.itemActionMenuShown(item.id)) }
+    )
+} emptyContent: { _ in
+    Text("暂无内容")
+} principalContent: { _ in
+    EmptyView()
+} loadingContent: { _ in
+    ProgressView()
+}
+```
+
+如果管理页需要内建创建 / 编辑输入和行操作菜单，可以使用 `DawnEditableManagementStoreSurface`，它只负责把 Store 状态和回调映射到 `DawnEditableManagementSurface`：
+
+```swift
+DawnEditableManagementStoreSurface(
+    store: store,
+    title: { $0.managementTitle },
+    items: { $0.editableItems },
+    itemTitle: { $0.title },
+    isLoading: { $0.isLoading },
+    addButtonTitle: { $0.addActionTitle },
+    editConfiguration: { _ in
+        DawnManagementEditConfiguration(
+            createTitle: "创建分类",
+            editTitle: "编辑分类",
+            inputPlaceholder: "请输入分类名称"
+        )
+    },
+    onCreate: { .createSubmitted($0) },
+    onEdit: { item, name in .editSubmitted(item.id, name) },
+    onDelete: { item in .deleteTapped(item.id) },
+    onMove: { source, destination in .moveItem(source, destination) }
+) { item, store, showMenu in
+    DawnManagementRow(
+        title: item.title,
+        onMenuTapped: showMenu
     )
 } emptyContent: { _ in
     Text("暂无内容")
