@@ -47,6 +47,40 @@ struct DawnSurfaceKitAPITests {
         _ = surface
     }
 
+    @Test("option picker accepts titled and untitled groups in embedded mode")
+    @MainActor
+    func optionPickerAcceptsGroupsInEmbeddedMode() {
+        let groups: [DawnOptionPickerGroup<SampleOption>] = [
+            .init(options: [.first]),
+            .init(title: "其他", options: [.second]),
+            .init(title: "空分组", options: []),
+        ]
+
+        let surface = DawnOptionPickerSurface(
+            title: "模式",
+            groups: groups,
+            displayText: { $0.rawValue },
+            isSelected: { $0 == .first },
+            onTap: { _ in },
+            presentationMode: .embedded,
+            dismissesOnSelection: false
+        )
+        let surfaceWithFooter = DawnOptionPickerSurface(
+            title: "模式",
+            groups: groups,
+            displayText: { $0.rawValue },
+            isSelected: { $0 == .first },
+            onTap: { _ in }
+        ) {
+            Text("说明")
+        }
+
+        #expect(surface.groups.count == 3)
+        #expect(surface.options == [.first, .second])
+        #expect(surface.groups[0].title == nil)
+        _ = surfaceWithFooter
+    }
+
     @Test("grid selection and action menu APIs compile")
     @MainActor
     func gridSelectionAndActionMenuAPIsCompile() {

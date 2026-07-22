@@ -27,7 +27,7 @@ DawnSurfaceKit 是一个轻量级 SwiftUI surface 组件库，提供单选、多
 也可以在 `Package.swift` 中添加：
 
 ```swift
-.package(url: "git@gitee.com:shaoxu0904/dawn-surface-kit.git", from: "0.2.2")
+.package(url: "git@gitee.com:shaoxu0904/dawn-surface-kit.git", from: "0.4.0")
 ```
 
 然后在目标里依赖这个产物：
@@ -58,6 +58,38 @@ struct CategoryPickerHost: View {
         )
     }
 }
+```
+
+### 分组单选
+
+```swift
+let groups: [DawnOptionPickerGroup<String>] = [
+    .init(title: nil, options: ["当前默认"]),
+    .init(title: "最近使用", options: ["人民币", "美元"]),
+    .init(title: "其他", options: ["欧元", "英镑"]),
+]
+
+DawnOptionPickerSurface(
+    title: "选择货币",
+    groups: groups,
+    displayText: { $0 },
+    isSelected: { $0 == selectedCurrency },
+    onTap: { selectedCurrency = $0 }
+)
+```
+
+`title` 为 `nil` 的分组只显示卡片，空分组不会渲染。需要把选择内容嵌入宿主页面时，使用 `.embedded` 并由宿主管理导航栏；设置 `dismissesOnSelection: false` 可以在单选后留在当前页面：
+
+```swift
+DawnOptionPickerSurface(
+    title: "货币单位",
+    groups: groups,
+    displayText: { $0 },
+    isSelected: { $0 == selectedCurrency },
+    onTap: { selectedCurrency = $0 },
+    presentationMode: .embedded,
+    dismissesOnSelection: false
+)
 ```
 
 ### 多选
