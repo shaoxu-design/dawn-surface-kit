@@ -154,10 +154,16 @@ public struct DawnManagementSurface<
                     ForEach(Array(self.items.enumerated()), id: \.element.id) { index, item in
                         self.rowContent(item)
                             .id(item.id)
+                            // 系统分隔线会在 onMove 期间缓存行边缘状态；由非首行持有唯一顶部分隔线，避免拖拽后线条滞留。
+                            .overlay(alignment: .top) {
+                                if index > 0 {
+                                    Divider()
+                                        .overlay(self.theme.dividerColor)
+                                }
+                            }
                             .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
                             .listRowBackground(self.theme.cardBackgroundColor)
-                            .listRowSeparator(index == 0 ? .hidden : .visible, edges: .top)
-                            .listRowSeparator(index == self.items.count - 1 ? .hidden : .visible, edges: .bottom)
+                            .listRowSeparator(.hidden)
                     }
                     .onMove { source, destination in
                         self.onMove?(source, destination)
