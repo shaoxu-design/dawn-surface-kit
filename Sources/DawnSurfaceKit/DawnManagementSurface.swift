@@ -248,6 +248,7 @@ public struct DawnManagementSurface<
         if #available(iOS 26.0, *) {
             content
                 .glassEffect(.regular.tint(self.theme.accentColor).interactive(), in: Capsule())
+                .contentShape(.interaction, Capsule())
         } else {
             content
                 .background(self.theme.accentColor)
